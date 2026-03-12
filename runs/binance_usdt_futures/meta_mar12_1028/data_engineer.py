@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-# 유동성 충분한 USDT 무기한 선물 유니버스
+# 유동성 충분한 USDT 무기한 선물 유니버스 (상위 10개 심볼)
 SYMBOLS = [
     'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT',
     'ADAUSDT', 'DOGEUSDT', 'AVAXUSDT', 'LTCUSDT', 'MATICUSDT',

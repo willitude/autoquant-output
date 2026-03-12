@@ -78,15 +78,26 @@ def run_backtest(
     w   = weights.loc[idx].fillna(0.0)
     ret = ret_df.loc[idx].fillna(0.0)
 
+    # ── 주간 리밸런싱: 매 5거래일마다만 비중 변경 ────────────────────────
+    # 날짜 인덱스 기준으로 5일마다 신호 업데이트, 그 사이는 이전 비중 유지
+    REBAL_FREQ = 5  # 리밸런싱 주기 (영업일 기준)
+    rebal_mask = pd.Series(False, index=w.index)
+    rebal_mask.iloc[::REBAL_FREQ] = True
+    # 리밸런싱 날이 아니면 이전 신호 유지
+    w_rebal = w.copy()
+    for i in range(1, len(w_rebal)):
+        if not rebal_mask.iloc[i]:
+            w_rebal.iloc[i] = w_rebal.iloc[i - 1]
+
     # ── PnL (look-ahead bias 없음: 전일 비중 × 당일 수익률) ──────────────
-    raw_pnl = (w.shift(1) * ret).sum(axis=1)
+    raw_pnl = (w_rebal.shift(1) * ret).sum(axis=1)
 
     # ── 거래비용 (편도 × 2 = 왕복, 리밸런싱 시점 기준) ──────────────────
-    turnover  = w.diff().abs().sum(axis=1)
+    turnover  = w_rebal.diff().abs().sum(axis=1)
     tx_cost   = turnover * (COMMISSION_BPS + SLIPPAGE_BPS) / 10000  # 6 bps × |Δw|
 
     # ── 펀딩비용 (1 bps/8h × 3회/일 = 3 bps/일, gross exposure 기준) ────
-    gross         = w.abs().sum(axis=1)
+    gross         = w_rebal.abs().sum(axis=1)
     funding_cost  = gross * (3 * FUNDING_BPS_8H) / 10000
 
     net_pnl = raw_pnl - tx_cost - funding_cost
@@ -187,12 +198,31 @@ if __name__ == '__main__':
     val_sortino     = sortino_ratio(val_pnl)
     val_calmar      = calmar_ratio(val_pnl)
 
-    # 평균 일별 회전율 & 거래 횟수
-    turnover_series = weights.diff().abs().sum(axis=1)
-    # 검증 기간만
+    # 평균 일별 회전율 & 거래 횟수 (실제 리밸런싱 기준)
     val_idx = val_pnl.index
-    avg_turnover = float(turnover_series.reindex(val_idx).mean())
-    num_trades   = int((turnover_series.reindex(val_idx) > 0.001).sum())
+
+    # 검증 기간의 실제 리밸런싱 회전율 계산
+    val_w_idx = weights.index
+    val_w_idx = val_w_idx[(val_w_idx >= VAL_START) & (val_w_idx <= VAL_END)]
+    val_w_idx = val_w_idx.intersection(
+        pd.concat({t: features[t]['ret_1d'] for t in list(weights.columns) if t in features}, axis=1).index
+    )
+
+    if len(val_w_idx) >= 2:
+        w_val = weights.loc[val_w_idx].fillna(0.0)
+        # 주간 리밸런싱 비중 복원
+        rebal_mask_v = pd.Series(False, index=w_val.index)
+        rebal_mask_v.iloc[::5] = True
+        w_rebal_v = w_val.copy()
+        for i in range(1, len(w_rebal_v)):
+            if not rebal_mask_v.iloc[i]:
+                w_rebal_v.iloc[i] = w_rebal_v.iloc[i - 1]
+        rebal_turnover = w_rebal_v.diff().abs().sum(axis=1)
+        avg_turnover = float(rebal_turnover.mean())
+        num_trades   = int((rebal_turnover > 0.001).sum())
+    else:
+        avg_turnover = 0.0
+        num_trades   = 0
 
     # 벤치마크: BTC 단순 보유 (검증 기간)
     if 'BTCUSDT' in features:
