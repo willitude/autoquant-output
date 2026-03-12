@@ -1,0 +1,14 @@
+# S3로 동기화되는 비코드 산출물 — Git에서 제외
+results.tsv
+session_costs.tsv
+run.log
+*.png
+*.jpg
+*.html
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.onnx
+__pycache__/
+.ipynb_checkpoints/
