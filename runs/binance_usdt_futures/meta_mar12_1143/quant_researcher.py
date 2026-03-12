@@ -17,8 +17,8 @@ import numpy as np
 # --- 하이퍼파라미터 ---
 MOM_WINDOW  = 20    # 모멘텀 계산 기간 (일)
 VOL_WINDOW  = 20    # 변동성 계산 기간 (일)
-TOP_N       = 3     # 롱 심볼 수
-BOTTOM_N    = 3     # 숏 심볼 수
+TOP_N       = 4     # 롱 심볼 수 (다각화: 10개 중 4개)
+BOTTOM_N    = 4     # 숏 심볼 수 (다각화: 10개 중 4개)
 LONG_WEIGHT  = 0.75  # 롱 사이드 합계 (gross 절반)
 SHORT_WEIGHT = 0.75  # 숏 사이드 합계 (gross 절반)
 

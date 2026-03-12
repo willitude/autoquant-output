@@ -112,17 +112,12 @@ if __name__ == "__main__":
     print("Allocating capital...")
     weights_daily = allocate_capital(signals, MAX_LEVERAGE, {})
 
-    # 주별 리밸런싱: REBAL_FREQ 영업일마다만 신호 갱신, 나머지는 직전 비중 유지
-    # → 거래 비용을 대폭 절감하면서 동일한 알파 노출을 유지
-    rebal_mask = pd.Series(False, index=weights_daily.index)
-    rebal_mask.iloc[::REBAL_FREQ] = True
-    weights = weights_daily.copy()
-    weights.loc[~rebal_mask] = np.nan
-    weights = weights.ffill().fillna(0.0)
+    # 일별 리밸런싱: 매일 신호 갱신
+    weights = weights_daily
 
     active_days = int((weights.abs().sum(axis=1) > 1e-6).sum())
     print(f"  비중 행렬: {weights.shape[0]}일 × {weights.shape[1]}심볼 "
-          f"(활성 일수: {active_days}, 리밸런스 주기: {REBAL_FREQ}일)")
+          f"(활성 일수: {active_days})")
 
     # 4. Backtest
     print("Running backtest...")
