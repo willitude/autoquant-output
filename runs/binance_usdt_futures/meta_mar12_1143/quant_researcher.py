@@ -78,7 +78,9 @@ def research_alpha(features: dict[str, pd.DataFrame]) -> pd.DataFrame:
     long_w  = long_raw.divide(long_sum,  axis=0).fillna(0.0) * LONG_WEIGHT
     short_w = short_raw.divide(short_sum, axis=0).fillna(0.0) * SHORT_WEIGHT
 
-    weights = long_w - short_w
+    # 숏 시그널: 하위 BOTTOM_N 심볼에 음수 비중 부여 (양방향 매매 구현)
+    short_signal = -short_w   # 하위 모멘텀 심볼 숏 포지션 (값 < 0)
+    weights = long_w + short_signal
 
     # NaN 이 하나라도 있는 행(워밍업 구간)은 0으로
     has_nan = mom.isna().any(axis=1) | vol.isna().any(axis=1)
