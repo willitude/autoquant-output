@@ -45,7 +45,8 @@ MAX_LEVERAGE        = float(_C["max_leverage"])        # 3.0
 ONEWAY_COST_BPS   = COMMISSION_BPS + SLIPPAGE_BPS  # 6bps (편도)
 FUNDING_DAILY_BPS = FUNDING_BPS_PER_8H * 3          # 3bps/일
 
-VAL_START = "2024-01-01"
+VAL_START    = "2024-01-01"
+REBAL_FREQ   = 5   # 리밸런싱 주기 (거래일 기준); 5 = 주 1회
 
 
 def run_backtest(
@@ -109,10 +110,19 @@ if __name__ == "__main__":
 
     # 3. Portfolio Allocation (레버리지 제약)
     print("Allocating capital...")
-    weights = allocate_capital(signals, MAX_LEVERAGE, {})
+    weights_daily = allocate_capital(signals, MAX_LEVERAGE, {})
+
+    # 주별 리밸런싱: REBAL_FREQ 영업일마다만 신호 갱신, 나머지는 직전 비중 유지
+    # → 거래 비용을 대폭 절감하면서 동일한 알파 노출을 유지
+    rebal_mask = pd.Series(False, index=weights_daily.index)
+    rebal_mask.iloc[::REBAL_FREQ] = True
+    weights = weights_daily.copy()
+    weights.loc[~rebal_mask] = np.nan
+    weights = weights.ffill().fillna(0.0)
+
     active_days = int((weights.abs().sum(axis=1) > 1e-6).sum())
     print(f"  비중 행렬: {weights.shape[0]}일 × {weights.shape[1]}심볼 "
-          f"(활성 일수: {active_days})")
+          f"(활성 일수: {active_days}, 리밸런스 주기: {REBAL_FREQ}일)")
 
     # 4. Backtest
     print("Running backtest...")
