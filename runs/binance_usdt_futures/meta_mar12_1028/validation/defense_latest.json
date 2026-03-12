@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-03-12T10:43:56.991266+00:00",
+  "generated_at": "2026-03-12T10:46:22.464212+00:00",
   "run_dir": "/tmp/output-workspace/runs/binance_usdt_futures/meta_mar12_1028",
   "branch": "autoquant/meta_mar12_1028",
-  "diff_base": "30324ab48a8168c594926b1fa8a2169d4b71612e",
-  "diff_head": "63fe031cbe56d02c9f0f42ab0cac700c28350f74",
-  "backend_requested": "auto",
+  "diff_base": "63fe031cbe56d02c9f0f42ab0cac700c28350f74",
+  "diff_head": "e9e9b38e7271bf8097bc216254754af73bfa3b84",
+  "backend_requested": "static",
   "backend_used": "static",
   "agent_model": null,
   "verdict": "pass",
-  "summary": "정적 검증은 통과했지만 Agent 수비수는 아직 활성화되지 않았습니다.",
+  "summary": "정적 및 Agent 방어 검증을 통과했습니다.",
   "changed_files": [
+    "runs/binance_usdt_futures/meta_mar12_1028/results.tsv",
+    "runs/binance_usdt_futures/meta_mar12_1028/system_operator.py",
     "runs/binance_usdt_futures/meta_mar12_1028/validation/defense_history.jsonl",
     "runs/binance_usdt_futures/meta_mar12_1028/validation/defense_latest.json"
   ],
-  "warnings": [
-    "OPENAI_API_KEY가 없어 Agent 검증을 건너뜁니다."
-  ],
+  "warnings": [],
   "findings": []
 }
