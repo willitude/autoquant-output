@@ -1,0 +1,37 @@
+{
+  "name": "binance_usdt_futures",
+  "market": {
+    "venue": "Binance",
+    "market_type": "centralized_perpetual_futures",
+    "asset_class": "crypto",
+    "instruments": "유동성이 충분한 USDT 무기한 선물",
+    "quote_currency": "USDT",
+    "trading_hours": "24/7",
+    "supports_long_short": true,
+    "settlement": "8시간 주기 funding 정산",
+    "live_region_hint": "ap-northeast-1"
+  },
+  "goal": "바이낸스 USDT 무기한 선물(Perpetual Futures) 시장에서 안정적으로 우상향하는 수익을 창출하라. 자본금 규모에 상관없이(Scalable) 작동해야 하며, 롱/숏 양방향 매매를 모두 활용하라.",
+  "research_focus": [
+    "단일 심볼에만 갇히지 말고 유동성이 충분한 선물 심볼 확장을 지속적으로 검토하라.",
+    "Funding, basis, 레짐, 단면 모멘텀 같은 파생상품 특화 피처를 우선 검토하라.",
+    "높은 회전율로 수수료를 태우기보다 현실적인 보유기간과 실행 가능성을 우선하라."
+  ],
+  "market_notes": [
+    "24/7 시장이므로 세션 개념보다 변동성 레짐과 유동성 레짐 변화가 더 중요할 수 있다.",
+    "순진한 추세추종이나 mean reversion은 funding, fee, slippage를 반영하면 급격히 악화될 수 있다."
+  ],
+  "live_requirements": [
+    "실거래 전환 시 Nautilus Trader를 우선 사용하라.",
+    "가격, 수량, 주문, 리스크 관리 객체를 파이썬 기본 타입으로 대충 흉내 내지 말라.",
+    "거래소 매칭엔진 위치를 고려해 지연이 낮은 리전을 선택하라."
+  ],
+  "constraints": {
+    "commission_bps": 4,
+    "slippage_bps": 2,
+    "funding_rate_bps_per_8h": 1,
+    "risk_free_rate": 0.0,
+    "max_leverage": 3,
+    "time_budget": 120
+  }
+}
