@@ -41,6 +41,11 @@ def volume_ratio(volume: pd.Series, window: int = 20) -> pd.Series:
     return volume / sma(volume, window)
 
 
+def momentum(close: pd.Series, window: int) -> pd.Series:
+    """n-day price momentum (단순 수익률)."""
+    return close.pct_change(window)
+
+
 def engineer_base_features(close: pd.Series, volume: pd.Series) -> pd.DataFrame:
     """price + volume 시리즈로부터 기본 피처 테이블을 생성한다."""
     returns = close.pct_change()
