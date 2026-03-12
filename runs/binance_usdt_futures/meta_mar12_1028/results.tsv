@@ -1,3 +1,4 @@
 commit	val_sharpe	val_return_pct	max_dd_pct	status	description
 28accea	0.4162	27.48	-48.36	ok	가설1: 단면 20일 위험조정 모멘텀 (상위3롱/하위3숏), 포트폴리오 변동성 타게팅 5%/일, 10종목 USDT 선물, 검증 2023-2025
 HEAD	0.7542	70.67	-37.60	ok	가설3: 주간(5일) 리밸런싱 → 거래비용 5배 절감, val_sharpe +81% 향상, sortino=1.07, MDD 개선
+HEAD	0.7631	73.54	-38.93	ok	가설4: 격주(10일) 리밸런싱 → 거래비용 추가 절감, val_sharpe 0.763, train_sharpe=0.915 일관성 확인

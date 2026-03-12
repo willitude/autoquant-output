@@ -78,9 +78,9 @@ def run_backtest(
     w   = weights.loc[idx].fillna(0.0)
     ret = ret_df.loc[idx].fillna(0.0)
 
-    # ── 주간 리밸런싱: 매 5거래일마다만 비중 변경 ────────────────────────
-    # 날짜 인덱스 기준으로 5일마다 신호 업데이트, 그 사이는 이전 비중 유지
-    REBAL_FREQ = 5  # 리밸런싱 주기 (영업일 기준)
+    # ── 격주 리밸런싱: 매 10거래일마다만 비중 변경 ───────────────────────
+    # 날짜 인덱스 기준으로 10일마다 신호 업데이트, 그 사이는 이전 비중 유지
+    REBAL_FREQ = 10  # 리밸런싱 주기 (영업일 기준)
     rebal_mask = pd.Series(False, index=w.index)
     rebal_mask.iloc[::REBAL_FREQ] = True
     # 리밸런싱 날이 아니면 이전 신호 유지
@@ -213,6 +213,13 @@ if __name__ == '__main__':
         # 주간 리밸런싱 비중 복원
         rebal_mask_v = pd.Series(False, index=w_val.index)
         rebal_mask_v.iloc[::5] = True
+        w_rebal_v = w_val.copy()
+        for i in range(1, len(w_rebal_v)):
+            if not rebal_mask_v.iloc[i]:
+                w_rebal_v.iloc[i] = w_rebal_v.iloc[i - 1]
+        # 10일 주기로 맞춤
+        rebal_mask_v = pd.Series(False, index=w_val.index)
+        rebal_mask_v.iloc[::10] = True
         w_rebal_v = w_val.copy()
         for i in range(1, len(w_rebal_v)):
             if not rebal_mask_v.iloc[i]:
